@@ -60,7 +60,7 @@ namespace WebCoreConsulServer
             {
                 DeregisterCriticalServiceAfter = TimeSpan.FromSeconds(5),//服务启动多久后注册
                 Interval = TimeSpan.FromSeconds(10),//间隔固定的时间访问一次，https://localhost:44308/api/Health
-                HTTP = $"https://localhost:44308/api/Health",//健康检查地址 44308是visualstudio启动的端口
+                HTTP = $"https://localhost:57628/api/Health",//健康检查地址 44308是visualstudio启动的端口
                 Timeout = TimeSpan.FromSeconds(5)
             };
              
@@ -70,12 +70,17 @@ namespace WebCoreConsulServer
                 ID = Guid.NewGuid().ToString(),
                 Name = "test1",
                 Address = "https://localhost/",
-                Port = 44308,
+                Port = 57628,
                 
             };
+            try
+            {
+                consulClient.Agent.ServiceRegister(registration).Wait();//注册服务 
+            }
+            catch(Exception ex)
+            {
 
-            consulClient.Agent.ServiceRegister(registration).Wait();//注册服务 
-
+            }
             //consulClient.Agent.ServiceDeregister(registration.ID).Wait();//registration.ID是guid
             //当服务停止时需要取消服务注册，不然，下次启动服务时，会再注册一个服务。
             //但是，如果该服务长期不启动，那consul会自动删除这个服务，大约2，3分钟就会删了 
